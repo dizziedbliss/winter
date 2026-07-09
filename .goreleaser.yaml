@@ -42,10 +42,10 @@ changelog:
     - title: "Bug Fixes"
       regexp: "^fix[(\\w+)]*:"
       order: 1
-    -title: "Breaking Changes"
+    - title: "Breaking Changes"
       regexp: "^BREAKING[(\\w+)]*:"
       order: 2
-    -title: "Other Changes"
+    - title: "Other Changes"
       regexp: "^chore[(\\w+)]*:"
       order: 3
     - title: "Documentation"
