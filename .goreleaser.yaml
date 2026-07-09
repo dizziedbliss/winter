@@ -45,11 +45,27 @@ archives:
 
 changelog:
   sort: asc
+
+  groups:
+    - title: "New Features"
+      regexp: "^feat[(\w+)]*:"
+      order: 0
+    - title: "Bug Fixes"
+      regexp: "^fix[(\w+)]*:"
+      order: 1
+    -title: "Breaking Changes"
+      regexp: "^BREAKING[(\w+)]*:"
+      order: 2
+    -title: "Other Changes"
+      regexp: "^chore[(\w+)]*:"
+      order: 3
+    - title: "Documentation"
+      regexp: "^docs[(\w+)]*:"
+      order: 4
   filters:
     exclude:
-      - "^docs:"
-      - "^test:"
-
+      - "merge"
+      - "Initial commit"
 release:
   footer: >-
 
