@@ -37,19 +37,19 @@ changelog:
 
   groups:
     - title: "New Features"
-      regexp: "^feat[(\w+)]*:"
+      regexp: "^feat[(\\w+)]*:"
       order: 0
     - title: "Bug Fixes"
-      regexp: "^fix[(\w+)]*:"
+      regexp: "^fix[(\\w+)]*:"
       order: 1
     -title: "Breaking Changes"
-      regexp: "^BREAKING[(\w+)]*:"
+      regexp: "^BREAKING[(\\w+)]*:"
       order: 2
     -title: "Other Changes"
-      regexp: "^chore[(\w+)]*:"
+      regexp: "^chore[(\\w+)]*:"
       order: 3
     - title: "Documentation"
-      regexp: "^docs[(\w+)]*:"
+      regexp: "^docs[(\\w+)]*:"
       order: 4
   filters:
     exclude:
