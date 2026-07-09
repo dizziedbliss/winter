@@ -1,26 +1,38 @@
 package deployment
 
-import (
-	"fmt"
+import "fmt"
+import "path/filepath"
 
-	"github.com/spf13/cobra"
-)
+func Deploy(directory string) error {
 
-// deployCmd represents the deploy command
-
-func Deploy() *cobra.Command {
-	return &cobra.Command{
-		Use:   "deploy",
-		Short: "A brief description of your command",
-		Long: `A longer description that spans multiple lines and likely contains examples
-		and usage of using your command. For example:
-
-		Cobra is a CLI library for Go that empowers applications.
-		This application is a tool to generate the needed files
-		to quickly create a Cobra application.`,
-		
-		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Println("deploy called")
-		},
+	file_type := "Dockerfile"
+	directory, err := filepath.Abs(directory)
+	if err != nil {
+		return err
 	}
+
+	//first it needs to scan for config file in the current directory and subdirectories so use Scan.go
+
+	path, err := Scan(directory, file_type)
+
+	if err != nil {
+		return err
+	}
+
+	// Now validate the file from the path and check if it is a valid Dockerfile
+
+
+	err = Validate(path)
+	if err != nil {
+		return err
+	}
+
+	err = Build(path)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println("Build Successfull")
+
+	return nil
 }

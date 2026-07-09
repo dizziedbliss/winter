@@ -1,4 +1,4 @@
-/*
+	/*
 Copyright © 2026 NAME HERE <EMAIL ADDRESS>
 */
 package cmd
@@ -8,7 +8,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/dizziedbliss/winter/internal/deployment"
+	"github.com/dizziedbliss/winter/cmd/cli"
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -46,5 +46,5 @@ func init() {
 	// when this action is called directly.
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 
-	rootCmd.AddCommand(deployment.Deploy())
+	rootCmd.AddCommand(cli.Deploycmd())
 }
