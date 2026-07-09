@@ -34,3 +34,4 @@ Editor/IDE
 dist/
 bin/
 coverage.out
+bin/
