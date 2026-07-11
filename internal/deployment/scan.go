@@ -7,20 +7,20 @@ import (
 	"path/filepath"
 )
 
-func Scan(directory string, config string) (string, error) {
+func Scan(opts DeploymentOpts) (string, error) {
 
-	log.Printf("Searching for %s in Directory %s", config, directory)
+	log.Printf("Searching for %s in Directory %s", opts.Config, opts.Path)
 
 	var found string
 
-	err := filepath.WalkDir(directory, func(path string, d fs.DirEntry, err error) error {
+	err := filepath.WalkDir(opts.Path, func(path string, d fs.DirEntry, err error) error {
 
 		if err != nil {
 			return err
 		}
 
-		if !d.IsDir() && d.Name() == config {
-			log.Printf("Found %s in Directory %s", config, path)
+		if !d.IsDir() && d.Name() == opts.Config {
+			log.Printf("Found %s in Directory %s", opts.Config, path)
 			found = path
 			return fs.SkipAll
 		}

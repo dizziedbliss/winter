@@ -3,24 +3,33 @@ package deployment
 import (
 	"fmt"
 	"log"
+	"os"
 	"os/exec"
 	"path/filepath"
 )
 
-func Validate(file_path string) error {
-	log.Printf("Validating Dockerfile at path: %s", file_path)
+func Validate(opts DeploymentOpts) error {
+	log.Printf("Validating Dockerfile at path: %s", opts.Path)
 
 	//for now lets just use docker --build --check
-	contextDir := filepath.Dir(file_path)
+	contextDir := filepath.Dir(opts.ConfigPath)
 
-	cmd := exec.Command("docker", "build", "--check", "--build-arg", "BUILDKIT_DOCKERFILE_CHECK=error=true", "-f", file_path, contextDir)
+	cmd := exec.Command("docker", "build", "--check", "--build-arg", "BUILDKIT_DOCKERFILE_CHECK=error=true", "-f", opts.ConfigPath, contextDir)
 
-	output, err := cmd.CombinedOutput()
+	if opts.Verbose {
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+	} else {
+		cmd.Stdout = nil
+		cmd.Stderr = nil
+	}
+	err := cmd.Run()
+
 	if err != nil {
-		return fmt.Errorf("validation failed:\n%s", output)
+		return fmt.Errorf("validation failed:\n%s", err)
 	}
 
-	log.Printf("validation succeeded: %s", output)
+	log.Printf("validation succeeded")
 
 	return nil
 }

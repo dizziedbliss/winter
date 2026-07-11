@@ -14,12 +14,20 @@ command usage:
 
 	RunE: func(cmd *cobra.Command, args []string) error {
 
+		verbose, err := cmd.Flags().GetBool("verbose")
+		if err != nil {
+			return err
+		}
+
 		dir, err := cmd.Flags().GetString("directory")
 		if err != nil {
 			return err
 		}
 
-		return deployment.Deploy(dir)
+		return deployment.Deploy(deployment.DeploymentOpts{
+			Path:    dir,
+			Verbose: verbose,
+		})
 	},
 }
 

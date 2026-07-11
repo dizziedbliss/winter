@@ -3,17 +3,21 @@ package deployment
 import "fmt"
 import "path/filepath"
 
-func Deploy(directory string) error {
+func Deploy(opts DeploymentOpts) error {
 
-	file_type := "Dockerfile"
-	directory, err := filepath.Abs(directory)
+	opts.Config = "Dockerfile"
+	absPath, err := filepath.Abs(opts.Path)
 	if err != nil {
 		return err
 	}
+	 
+	opts.Path = absPath
 
 	//first it needs to scan for config file in the current directory and subdirectories so use Scan.go
 
-	path, err := Scan(directory, file_type)
+	path, err := Scan(opts)
+
+	opts.ConfigPath = path
 
 	if err != nil {
 		return err
@@ -22,12 +26,12 @@ func Deploy(directory string) error {
 	// Now validate the file from the path and check if it is a valid Dockerfile
 
 
-	err = Validate(path)
+	err = Validate(opts)
 	if err != nil {
 		return err
 	}
 
-	err = Build(path)
+	err = Build(opts)
 	if err != nil {
 		return err
 	}
