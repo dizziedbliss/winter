@@ -1,7 +1,12 @@
 package cli
 
-import "github.com/dizziedbliss/winter/internal/deployment"
-import "github.com/spf13/cobra"
+import (
+	"log"
+
+	"github.com/spf13/cobra"
+
+	"github.com/dizziedbliss/winter/internal/deployment"
+)
 
 var deploycmd = &cobra.Command{
 	Use:   "deploy",
@@ -24,9 +29,10 @@ command usage:
 			return err
 		}
 
-		return deployment.Deploy(deployment.DeploymentOpts{
+		return deployment.Deploy(&deployment.DeployOptions{
 			Path:    dir,
 			Verbose: verbose,
+			Logger:  log.Default(),
 		})
 	},
 }

@@ -3,25 +3,22 @@ package deployment
 import (
 	"errors"
 	"io/fs"
-	"log"
 	"path/filepath"
 )
 
-func Scan(opts DeploymentOpts) (string, error) {
+func (d *DeployOptions)Scan() ( error) {
 
-	log.Printf("Searching for %s in Directory %s", opts.Config, opts.Path)
+	d.Logger.Printf("Searching for %s in Directory %s", d.Config, d.Path)
 
-	var found string
-
-	err := filepath.WalkDir(opts.Path, func(path string, d fs.DirEntry, err error) error {
+	err := filepath.WalkDir(d.Path, func(path string, dir fs.DirEntry, err error) error {
 
 		if err != nil {
 			return err
 		}
 
-		if !d.IsDir() && d.Name() == opts.Config {
-			log.Printf("Found %s in Directory %s", opts.Config, path)
-			found = path
+		if !dir.IsDir() && dir.Name() == d.Config {
+			d.Logger.Printf("Found %s in Directory %s", d.Config, path)
+			d.ConfigPath = path
 			return fs.SkipAll
 		}
 
@@ -30,12 +27,12 @@ func Scan(opts DeploymentOpts) (string, error) {
 
 
 	if err != nil && err != fs.SkipAll {
-		return "", err
+		return err
 	}
 
-	if found == "" {
-		return "", errors.New("config file not found")
+	if d.ConfigPath == "" {
+		return errors.New("config file not found")
 	}
 
-	return found, nil
+	return nil
 }

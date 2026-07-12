@@ -2,21 +2,17 @@ package deployment
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"os/exec"
 )
 
-func Build(opts DeploymentOpts) error {
+func (d *DeployOptions) Build() error {
 
-	cmd := exec.Command("docker", "build", "--network=host", "-f", opts.ConfigPath, ".")
+	cmd := exec.Command("docker", "build", "--network=host", "-f", d.ConfigPath, d.Path)
 
-	if opts.Verbose {
+	if d.Verbose {
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
-	} else {
-		cmd.Stdout = nil
-		cmd.Stderr = nil
 	}
 
 	err := cmd.Run()
@@ -25,6 +21,6 @@ func Build(opts DeploymentOpts) error {
 		return fmt.Errorf("build failed: %v", err)
 	}
 
-	log.Printf("build succeeded")
+	d.Logger.Printf("build succeeded")
 	return nil
 }
