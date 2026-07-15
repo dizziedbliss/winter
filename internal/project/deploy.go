@@ -1,37 +1,43 @@
-package deployment
+package project
 
-import "path/filepath"
-import "fmt"
+import (
+	"fmt"
+	"path/filepath"
+)
 
-func Deploy(opts *DeployOptions) error {
+func Deploy(p *Project) error {
 
-	opts.Config = "Dockerfile"
-	absPath, err := filepath.Abs(opts.Path)
+	p.Config = "Dockerfile"
+	absPath, err := filepath.Abs(p.Path)
 	if err != nil {
+		p.DeployUI.Error(err)
 		return err
 	}
 
-	opts.Path = absPath
+	p.Path = absPath
 
 	//first it needs to scan for config file in the current directory and subdirectories so use Scan.go
 
-	if err := opts.Scan(); err != nil {
+	if err := p.Scan(); err != nil {
+		p.DeployUI.Error(err)
 		return fmt.Errorf("Scan failed: %v", err)
 	}
 
 	// Now validate the file from the path and check if it is a valid Dockerfile
 
-	if err := opts.Validate(); err != nil {
+	if err := p.Validate(); err != nil {
+		p.DeployUI.Error(err)
 		return fmt.Errorf("Validation failed: %v", err)
 	}
 
 	// Now build the docker image from the path and config file
 
-	if err := opts.Build(); err != nil {
+	if err := p.Build(); err != nil {
+		p.DeployUI.Error(err)
 		return fmt.Errorf("Build failed: %v", err)
 	}
 
-	opts.Logger.Println("Build Successfull")
+	p.DeployUI.Success("Build Successful")
 
 	return nil
 }

@@ -1,4 +1,4 @@
-package deployment
+package project
 
 import (
 	"fmt"
@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 )
 
-func (d *DeployOptions) Validate() error {
+func (d *Project) Validate() error {
 	d.Logger.Printf("Validating Dockerfile at path: %s", d.Path)
 
 	//for now lets just use docker --build --check
@@ -22,10 +22,11 @@ func (d *DeployOptions) Validate() error {
 	err := cmd.Run()
 
 	if err != nil {
+		d.DeployUI.Error(fmt.Errorf("validation failed:\n%s", err))
 		return fmt.Errorf("validation failed:\n%s", err)
 	}
 
-	d.Logger.Printf("validation succeeded")
+	d.DeployUI.Status("Dockerfile validation successful")
 
 	return nil
 }

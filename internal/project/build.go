@@ -1,4 +1,4 @@
-package deployment
+package project
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 	"os/exec"
 )
 
-func (d *DeployOptions) Build() error {
+func (d *Project) Build() error {
 
 	cmd := exec.Command("docker", "build", "--network=host", "-f", d.ConfigPath, d.Path)
 
@@ -18,9 +18,10 @@ func (d *DeployOptions) Build() error {
 	err := cmd.Run()
 
 	if err != nil {
+		d.DeployUI.Error(fmt.Errorf("build failed: %v", err))
 		return fmt.Errorf("build failed: %v", err)
 	}
 
-	d.Logger.Printf("build succeeded")
+	d.DeployUI.Success("Build Successful")
 	return nil
 }

@@ -5,7 +5,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/dizziedbliss/winter/internal/deployment"
+	"github.com/dizziedbliss/winter/internal/ui/bubbletea"
+	"github.com/dizziedbliss/winter/internal/project"
 )
 
 var deploycmd = &cobra.Command{
@@ -29,10 +30,11 @@ command usage:
 			return err
 		}
 
-		return deployment.Deploy(&deployment.DeployOptions{
-			Path:    dir,
-			Verbose: verbose,
-			Logger:  log.Default(),
+		return project.Deploy(&project.Project{
+			Path:     dir,
+			Verbose:  verbose,
+			Logger:   log.Default(),
+			DeployUI: &ui.BubbleTeaUI{},
 		})
 	},
 }
