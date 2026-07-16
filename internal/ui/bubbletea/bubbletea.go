@@ -1,6 +1,11 @@
-package ui
+package bubbletea
 
 import "fmt"
+import tea "charm.land/bubbletea/v2"
+
+type ErrMsg error
+type StatusMsg string
+type SuccessMsg string
 
 type UI interface {
 	Status(string)
@@ -9,10 +14,12 @@ type UI interface {
 	Success(string)
 }
 
-type BubbleTeaUI struct{}
+type BubbleTeaUI struct {
+	program *tea.Program
+}
 
 func (b *BubbleTeaUI) Status(msg string) {
-	fmt.Println(msg)
+	b.program.Send(StatusMsg(msg))
 }
 
 func (b *BubbleTeaUI) Progress(percent int) {
@@ -20,9 +27,29 @@ func (b *BubbleTeaUI) Progress(percent int) {
 }
 
 func (b *BubbleTeaUI) Error(err error) {
-	fmt.Println("Error:", err)
+	b.program.Send(ErrMsg(err))
 }
 
 func (b *BubbleTeaUI) Success(msg string) {
-	fmt.Println("Success:", msg)
+	b.program.Send(SuccessMsg(msg))
+}
+
+func New() *BubbleTeaUI {
+
+	model := initModel()
+
+	return &BubbleTeaUI{
+		program: tea.NewProgram(model),
+	}
+}
+
+func (b *BubbleTeaUI) Run(task func() error) error {
+
+	go func() {
+		_ = task()
+	}()
+
+	_, err := b.program.Run()
+
+	return err
 }

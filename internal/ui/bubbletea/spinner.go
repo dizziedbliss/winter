@@ -1,4 +1,4 @@
-package ui
+package bubbletea
 
 import (
 	"fmt"
@@ -8,40 +8,48 @@ import (
 	"charm.land/lipgloss/v2"
 )
 
-type errMsg error
-
-type model struct {
+type Model struct {
 	spinner  spinner.Model
 	quitting bool
 	err      error
+	status   string
+	logs    []string
 }
 
-func initModel() model {
+func initModel() Model {
 	s := spinner.New()
 	s.Spinner = spinner.Dot
 	s.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("205"))
 
-	return model{spinner: s}
+	return Model{spinner: s}
 }
 
-func (m model) Init() tea.Cmd {
+func (m Model) Init() tea.Cmd {
 	return m.spinner.Tick
 }
 
-func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyPressMsg:
 		switch msg.String() {
-		case "q", "esc", "ctrl+c":
+		case "ctrl+c":
 			m.quitting = true
 			return m, tea.Quit
 		default:
 			return m, nil
 		}
 
-	case errMsg:
+	case StatusMsg:
+		m.status = string(msg)
+		return m, nil
+
+	case ErrMsg:
 		m.err = msg
 		return m, nil
+
+	case SuccessMsg:
+		m.status = string(msg)
+		return m, tea.Quit
 
 	default:
 		var cmd tea.Cmd
@@ -51,11 +59,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	}
 }
 
-func (m model) View() tea.View {
+func (m Model) View() tea.View {
 	if m.err != nil {
 		return tea.NewView(m.err.Error())
 	}
-	str := fmt.Sprintf("\n\n  %s Deploying...\n\n", m.spinner.View())
+	str := fmt.Sprintf("\n%s %s\n", m.spinner.View(), m.status)
 
 	if m.quitting {
 		return tea.NewView(str + "\n")
@@ -63,10 +71,3 @@ func (m model) View() tea.View {
 	return tea.NewView(str)
 }
 
-func runSpinner() error {
-	p := tea.NewProgram(initModel())
-	if _, err := p.Run(); err != nil {
-		return fmt.Errorf("failed to run spinner: %v", err)
-	}
-	return nil
-}

@@ -1,12 +1,10 @@
 package cli
 
 import (
-	"log"
-
 	"github.com/spf13/cobra"
 
-	"github.com/dizziedbliss/winter/internal/ui/bubbletea"
 	"github.com/dizziedbliss/winter/internal/project"
+	"github.com/dizziedbliss/winter/internal/ui/bubbletea"
 )
 
 var deploycmd = &cobra.Command{
@@ -30,12 +28,16 @@ command usage:
 			return err
 		}
 
-		return project.Deploy(&project.Project{
-			Path:     dir,
-			Verbose:  verbose,
-			Logger:   log.Default(),
-			DeployUI: &ui.BubbleTeaUI{},
-		})
+		bubble := bubbletea.New()
+		proj := project.NewProject(
+			dir,
+			verbose,
+			bubble,
+		)
+
+		return bubble.Run(func() error {
+				return proj.Deploy()
+			})
 	},
 }
 

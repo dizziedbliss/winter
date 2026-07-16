@@ -8,7 +8,7 @@ import (
 )
 
 func (d *Project) Validate() error {
-	d.Logger.Printf("Validating Dockerfile at path: %s", d.Path)
+	d.UI.Status("Validating Dockerfile at path: " + d.Path)
 
 	//for now lets just use docker --build --check
 	contextDir := filepath.Dir(d.ConfigPath)
@@ -22,11 +22,11 @@ func (d *Project) Validate() error {
 	err := cmd.Run()
 
 	if err != nil {
-		d.DeployUI.Error(fmt.Errorf("validation failed:\n%s", err))
+		d.UI.Error(fmt.Errorf("validation failed:\n%s", err))
 		return fmt.Errorf("validation failed:\n%s", err)
 	}
 
-	d.DeployUI.Status("Dockerfile validation successful")
+	d.UI.Status("Dockerfile validation successful")
 
 	return nil
 }

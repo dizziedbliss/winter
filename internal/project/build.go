@@ -8,6 +8,8 @@ import (
 
 func (d *Project) Build() error {
 
+	d.UI.Status("Building Docker image from path: " + d.Path)
+
 	cmd := exec.Command("docker", "build", "--network=host", "-f", d.ConfigPath, d.Path)
 
 	if d.Verbose {
@@ -18,10 +20,10 @@ func (d *Project) Build() error {
 	err := cmd.Run()
 
 	if err != nil {
-		d.DeployUI.Error(fmt.Errorf("build failed: %v", err))
+		d.UI.Error(fmt.Errorf("build failed: %v", err))
 		return fmt.Errorf("build failed: %v", err)
 	}
 
-	d.DeployUI.Success("Build Successful")
+	d.UI.Status("Build Successful")
 	return nil
 }

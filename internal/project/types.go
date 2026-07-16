@@ -3,7 +3,7 @@ package project
 import (
 	"log"
 
-	"github.com/dizziedbliss/winter/internal/ui/bubbletea"
+	ui "github.com/dizziedbliss/winter/internal/ui/bubbletea"
 )
 
 type Project struct {
@@ -13,5 +13,14 @@ type Project struct {
 	ConfigPath string
 	Logger     *log.Logger
 
-	DeployUI ui.UI
+	UI ui.UI
+}
+
+func NewProject(path string, verbose bool, ui ui.UI) *Project {
+	return &Project{
+		Path:    path,
+		Verbose: verbose,
+		Logger:  log.Default(),
+		UI:      ui,
+	}
 }
